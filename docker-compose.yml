@@ -9,6 +9,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
 
   app:
     build: .
@@ -26,7 +28,11 @@ services:
       DATABASE_URL: ${DATABASE_URL}
     depends_on:
       - postgres
+    volumes:
+      - .:/usr/src/app
+      - node_modules:/usr/src/app/node_modules
+    command: npm run start:dev -- --poll
 
 volumes:
   postgres_data:
-    driver: local
+  node_modules:
