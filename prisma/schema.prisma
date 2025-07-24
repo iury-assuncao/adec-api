@@ -29,6 +29,8 @@ model Address {
   church     Church?
   sector     Sector?
   member     Member?
+
+  @@map("addresses")
 }
 
 model Church {
@@ -39,6 +41,8 @@ model Church {
   createdAt DateTime @default(now())
 
   sectors   Sector[]
+
+  @@map("churches")
 }
 
 model Sector {
@@ -54,6 +58,8 @@ model Sector {
 
   members   Member[]
   users     User[]
+
+  @@map("sectors")
 }
 
 model Member {
@@ -64,6 +70,7 @@ model Member {
   name        String
   email       String?
   phone       String?
+  position    String?
   birthDate   DateTime?
   baptismDate DateTime?
 
@@ -71,6 +78,8 @@ model Member {
 
   sector      Sector   @relation(fields: [sectorId], references: [id])
   address     Address? @relation(fields: [addressId], references: [id])
+
+  @@map("members")
 }
 
 model User {
@@ -78,15 +87,26 @@ model User {
   sectorId     String
   name         String
   email        String   @unique
-  passwordHash String
+  password     String
   role         UserRole
   createdAt    DateTime @default(now())
 
   sector       Sector   @relation(fields: [sectorId], references: [id])
+
+  @@map("users")
 }
 
 enum UserRole {
   ADMIN
   LEADER
   MEMBER
+}
+
+enum MemberPosition {
+  PRESBITERO
+  PASTOR
+  DIACONO
+  LIDER
+  MEMBRO
+
 }
