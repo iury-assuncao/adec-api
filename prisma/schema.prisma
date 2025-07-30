@@ -4,7 +4,109 @@ generator client {
   output   = "../generated/prisma"
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "../generated/ERD.svg"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Address {
+  id         String   @id @default(uuid())
+  street     String
+  number     String?
+  complement String?
+  district   String?
+  city       String
+  state      String
+  zipCode    String
+  country    String   @default("Brasil")
+  createdAt  DateTime @default(now())
+
+  church     Church?
+  sector     Sector?
+  member     Member?
+
+  @@map("addresses")
+}
+
+model Church {
+  id        String   @id @default(uuid())
+  name      String
+  addressId String? @unique
+  address   Address? @relation(fields: [addressId], references: [id])
+  createdAt DateTime @default(now())
+
+  sectors   Sector[]
+
+  @@map("churches")
+}
+
+model Sector {
+  id        String   @id @default(uuid())
+  name      String
+  churchId  String
+  addressId String? @unique
+
+  createdAt DateTime @default(now())
+
+  church    Church   @relation(fields: [churchId], references: [id])
+  address   Address? @relation(fields: [addressId], references: [id])
+
+  members   Member[]
+  users     User[]
+
+  @@map("sectors")
+}
+
+model Member {
+  id          String   @id @default(uuid())
+  sectorId    String
+  addressId   String? @unique
+
+  name        String
+  email       String?
+  phone       String?
+  position    String?
+  birthDate   DateTime?
+  baptismDate DateTime?
+
+  createdAt   DateTime @default(now())
+
+  sector      Sector   @relation(fields: [sectorId], references: [id])
+  address     Address? @relation(fields: [addressId], references: [id])
+
+  @@map("members")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  sectorId     String
+  name         String
+  email        String   @unique
+  password     String
+  role         UserRole
+  createdAt    DateTime @default(now())
+
+  sector       Sector   @relation(fields: [sectorId], references: [id])
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  LEADER
+  MEMBER
+}
+
+enum MemberPosition {
+  PRESBITERO
+  PASTOR
+  DIACONO
+  LIDER
+  MEMBRO
+
 }
