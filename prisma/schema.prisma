@@ -83,14 +83,14 @@ model Member {
 
 model User {
   id        String   @id @default(uuid())
-  sectorId  String   @map("sector_id")
+  sectorId  String?   @map("sector_id")
   name      String
   email     String   @unique
   password  String
   role      UserRole
   createdAt DateTime @default(now()) @map("created_at")
 
-  sector Sector @relation(fields: [sectorId], references: [id])
+  sector Sector? @relation(fields: [sectorId], references: [id])
 
   @@map("users")
 }
