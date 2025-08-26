@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -22,13 +21,13 @@ model Address {
   district   String?
   city       String
   state      String
-  zipCode    String
+  zipCode    String   @map("zip_code")
   country    String   @default("Brasil")
-  createdAt  DateTime @default(now())
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  church     Church?
-  sector     Sector?
-  member     Member?
+  church Church?
+  sector Sector?
+  member Member?
 
   @@map("addresses")
 }
@@ -36,62 +35,62 @@ model Address {
 model Church {
   id        String   @id @default(uuid())
   name      String
-  addressId String? @unique
+  addressId String?  @unique @map("address_id")
   address   Address? @relation(fields: [addressId], references: [id])
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
 
-  sectors   Sector[]
+  sectors Sector[]
 
   @@map("churches")
 }
 
 model Sector {
-  id        String   @id @default(uuid())
+  id        String  @id @default(uuid())
   name      String
-  churchId  String
-  addressId String? @unique
+  churchId  String  @map("church_id")
+  addressId String? @unique @map("address_id")
 
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
 
-  church    Church   @relation(fields: [churchId], references: [id])
-  address   Address? @relation(fields: [addressId], references: [id])
+  church  Church   @relation(fields: [churchId], references: [id])
+  address Address? @relation(fields: [addressId], references: [id])
 
-  members   Member[]
-  users     User[]
+  members Member[]
+  users   User[]
 
   @@map("sectors")
 }
 
 model Member {
-  id          String   @id @default(uuid())
-  sectorId    String
-  addressId   String? @unique
+  id        String  @id @default(uuid())
+  sectorId  String  @map("sector_id")
+  addressId String? @unique @map("address_id")
 
   name        String
   email       String?
   phone       String?
   position    String?
-  birthDate   DateTime?
-  baptismDate DateTime?
+  birthDate   DateTime? @map("birth_date")
+  baptismDate DateTime? @map("baptism_date")
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
 
-  sector      Sector   @relation(fields: [sectorId], references: [id])
-  address     Address? @relation(fields: [addressId], references: [id])
+  sector  Sector   @relation(fields: [sectorId], references: [id])
+  address Address? @relation(fields: [addressId], references: [id])
 
   @@map("members")
 }
 
 model User {
-  id           String   @id @default(uuid())
-  sectorId     String
-  name         String
-  email        String   @unique
-  password     String
-  role         UserRole
-  createdAt    DateTime @default(now())
+  id        String   @id @default(uuid())
+  sectorId  String   @map("sector_id")
+  name      String
+  email     String   @unique
+  password  String
+  role      UserRole
+  createdAt DateTime @default(now()) @map("created_at")
 
-  sector       Sector   @relation(fields: [sectorId], references: [id])
+  sector Sector @relation(fields: [sectorId], references: [id])
 
   @@map("users")
 }
@@ -108,5 +107,4 @@ enum MemberPosition {
   DIACONO
   LIDER
   MEMBRO
-
 }
