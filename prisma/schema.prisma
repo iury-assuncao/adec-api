@@ -56,7 +56,6 @@ model Sector {
   address Address? @relation(fields: [addressId], references: [id])
 
   members Member[]
-  users   User[]
 
   @@map("sectors")
 }
@@ -83,14 +82,11 @@ model Member {
 
 model User {
   id        String   @id @default(uuid())
-  sectorId  String?   @map("sector_id")
   name      String
   email     String   @unique
   password  String
   role      UserRole
   createdAt DateTime @default(now()) @map("created_at")
-
-  sector Sector? @relation(fields: [sectorId], references: [id])
 
   @@map("users")
 }
